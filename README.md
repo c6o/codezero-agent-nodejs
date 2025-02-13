@@ -40,7 +40,7 @@ http.get("http://my-service.namespace/path", { agent }, (res) => {
 
 ## API
 
-### `new CodezeroAgent(orgID: string, orgAPIKey: string, spaceID: string)`
+### `new CodezeroAgent({ orgID: string, orgAPIKey: string, spaceID: string })`
 
 Returns implementation of an `http.Agent` that connects to the Teamspace with the given `spaceID`.
 
