@@ -12,6 +12,8 @@ interface SpaceCredentials {
 
 export class CodezeroAgent extends HttpsProxyAgent<string> {
   private _credentials: SpaceCredentials | null = null;
+  private _hubServerBaseUrl: string = 'https://hub.codezero.io';
+
   constructor(
     private orgID = process.env.CZ_ORG_ID,
     private orgApiKey = process.env.CZ_ORG_API_KEY,
@@ -21,6 +23,10 @@ export class CodezeroAgent extends HttpsProxyAgent<string> {
       throw new Error("Missing CZ_ORG_ID, CZ_ORG_API_KEY or CZ_SPACE_ID");
     }
     super("https://127.0.0.1");
+
+    if (process.env.CZ_HUB_SERVER_BASE_URL) {
+      this._hubServerBaseUrl = process.env.CZ_HUB_SERVER_BASE_URL!;
+    }
   }
 
   override async connect(
@@ -39,7 +45,7 @@ export class CodezeroAgent extends HttpsProxyAgent<string> {
   private async getSpaceCredentials(): Promise<SpaceCredentials> {
     if (!this._credentials || this.tokenExpired(this._credentials.token)) {
       const spaceResponse = await fetch(
-        `https://hub.codezero.io/api/c6o/connect/c6oapi.v1.C6OService/GetSpaceConnection`,
+        `${this._hubServerBaseUrl}/api/c6o/connect/c6oapi.v1.C6OService/GetSpaceConnection`,
         {
           method: "POST",
           headers: {
@@ -52,6 +58,7 @@ export class CodezeroAgent extends HttpsProxyAgent<string> {
         }
       );
       const response = (await spaceResponse.json()) as any;
+
       if (!spaceResponse.ok) {
         throw new Error(response.message);
       }
