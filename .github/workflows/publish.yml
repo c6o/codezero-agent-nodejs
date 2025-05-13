@@ -19,7 +19,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       NODE_AUTH_TOKEN: ${{ secrets.NARAYAN_C6O_NPM_TOKEN }}
     steps:
-      - uses: actions/checkout@85e6279cec87321a52edac9c87bce653a07cf6c2 # v2.7.0
+      - uses: actions/checkout@v4.2.2
       - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
         with:
           registry-url: "https://registry.npmjs.org"
