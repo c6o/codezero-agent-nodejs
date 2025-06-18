@@ -37,6 +37,7 @@ export class CodezeroAgent extends HttpsProxyAgent<string> {
     this.orgID = orgID;
     this.orgApiKey = orgApiKey;
     this.spaceID = spaceID;
+    this.keepAlive = true;
 
     if (process.env.CZ_HUB_SERVER_BASE_URL) {
       this._hubServerBaseUrl = process.env.CZ_HUB_SERVER_BASE_URL!;
