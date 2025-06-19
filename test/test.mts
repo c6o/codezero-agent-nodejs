@@ -102,5 +102,35 @@ describe('CodezeroAgent', () => {
 
       expect(hubRequestCount).toBe(2);
     });
+    
+    it('should reuse the sockets for subsequent requests to the same host', async () => {
+      const targetServer0 = createServer((req, res) => {
+        res.end('targetServer0');
+      });
+      const targetServer1 = createServer((req, res) => {
+        res.end('targetServer1');
+      });
+      const targetServer0Url = await listen(targetServer0);
+      const targetServer1Url = await listen(targetServer1);
+      
+      const agent = new CodezeroAgent({orgID: "orgId", orgApiKey: "orgApiKey", spaceID: "spaceId"});
+
+      let res = await fetch(targetServer0Url.href, { agent });
+      expect(hubRequestCount).toBe(1);
+      expect(await res.text()).toBe('targetServer0');
+
+      agent['_credentials']!['token'] = createToken(-3*60);
+      res = await fetch(targetServer0Url.href, { agent });
+      expect(hubRequestCount).toBe(1); // should not refetch credentials because it's reusing the socket
+      expect(await res.text()).toBe('targetServer0');
+      
+      
+      res = await fetch(targetServer1Url.href, { agent });
+      expect(hubRequestCount).toBe(2); // should refetch credentials because it's a different target server
+      expect(await res.text()).toBe('targetServer1');
+      
+      targetServer0.close();
+      targetServer1.close();
+    });
   });
 });
