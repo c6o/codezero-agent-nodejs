@@ -92,6 +92,7 @@ describe('CodezeroAgent', () => {
 
     it('should refetch credentials if token is expired', async () => {
       const agent = new CodezeroAgent({orgID: "orgId", orgApiKey: "orgApiKey", spaceID: "spaceId"});
+      agent.keepAlive = false; // avoid reusing the socket
 
       await fetch(targetServerUrl.href, { agent });
       expect(hubRequestCount).toBe(1);
